@@ -1,0 +1,65 @@
+class DOMBoundary
+    @createRangeBetween = (b1,b2)->
+        b1 = new DOMBoundary(b1)
+        b2 = new DOMBoundary(b2)
+        range = document.createRange()
+        position = b1.compare b2
+        if position is "identical"
+            if b1.include or b2.include
+                range.setStart b1.getTargetParent(),b1.getTargetIndex()
+                range.setStart b1.getTargetParent(),b1.getTargetIndex() + 1
+            else
+                range.setStart b1.getTargetParent(),b1.getTargetIndex()
+                range.setEnd b1.getTargetParent(),b1.getTargetIndex()
+            return range
+        if position is "after"
+            b = b2
+            b2 = b1
+            b1 = b
+        range.setStart b1.getTargetParent(),b1.getTargetIndex()
+        if b2.include
+            fix = 1
+        else
+            fix = 0
+        range.setEnd b2.getTargetParent(),b2.getTargetIndex() + fix
+        return range
+
+
+    constructor:(option = {})->
+        @node = option.node
+        @offset = option.offset or null
+        @type = option.type or "edge"
+        @include = @type is "include"
+    getTargetElement:()->
+        if @type isnt "edge"
+            return @node
+        return null
+    getTargetParent:()->
+        if @type is "include"
+            return @node.parentElement
+        else
+            return @node
+    getTargetIndex:()->
+        if @type is "include"
+            for child,index in @node.parentElement
+                if child is @node
+                    return index
+        else
+            return @offset
+        return null
+    compare:(boundary)->
+        result = @node.compareDocumentPosition boundary.node
+        o1 = @offset or 0
+        o2 = boundary.offset or 0
+        if result is 0
+            if o1 > o2
+                return "after"
+            else if o1 < o2
+                return "before"
+            else
+                return "identical"
+        else if (result & 2) is 2
+            return "after"
+        else
+            return "before"
+module.exports = DOMBoundary

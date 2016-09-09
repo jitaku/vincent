@@ -1,0 +1,5 @@
+module.exports = Leaf.ErrorDoc.create()
+    .define("UnexpectedInput")
+    .define("LogicError")
+    .define("OperationError")
+    .generate()

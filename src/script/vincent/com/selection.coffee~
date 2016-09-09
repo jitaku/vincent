@@ -1,0 +1,156 @@
+COMCursor = require "./cursor"
+WalkerRootFirst = (require "./helper/walker").WalkerRootFirst
+Errors = require "./errors"
+class COMSelection
+    constructor:(@context)->
+        @baseCursor = new COMCursor(@context,{isShadow:true})
+        @extentCursor = @context.cursor
+    fromAnchor:(baseAnchor,extentAnchor)->
+        @baseCursor.pointAtAnchor baseAnchor
+        @extentCursor.pointAtAnchor extentAnchor
+        if not @isActive
+            @collapseToCursor()
+        @update()
+        return true
+    fromDOMRegion:(base,extent)->
+        if not @baseCursor.setCursorByDOMRegion(base)
+            return false
+        if not @extentCursor.setCursorByDOMRegion(extent)
+            return false
+        if not @isActive
+            @collapseToCursor()
+        return @update()
+    active:()->
+        if @isActive
+            return
+        @isActive = true
+        @collapseToCursor()
+    deactive:()->
+        if not @isActive
+            return
+        @isActive = false
+
+    cancel:()->
+        @collapseToCursor()
+        @deactive()
+    update:()->
+        baseAnchor = @baseCursor.anchor
+        extentAnchor = @extentCursor.anchor
+        @baseAnchor = baseAnchor
+        @extentAnchor = extentAnchor
+        return true
+    collapseToCursor:(cursor = @extentCursor)->
+        if not cursor or not cursor.anchor
+            return false
+        @baseCursor.pointAtAnchor cursor.anchor
+        @extentCursor.pointAtAnchor cursor.anchor
+        @update()
+        return false
+
+    baseAction:(args...)->
+        @baseCursor.conduct args...
+    extentAction:(args...)->
+        @extentCursor.conduct args...
+    clear:()->
+        @baseAnchor = null
+        @extentAnchor = null
+    isValid:()->
+        return @baseAnchor?.node.root? and @extentAnchor?.node.root?
+    isCollapsed:()->
+        if not @baseAnchor or not @extentAnchor
+            return true
+        return (@baseAnchor.node is @extentAnchor.node and @baseAnchor.index is @extentAnchor.index) or @forceCollapse
+    debug:()->
+        return "#{@baseAnchor.node.type}:#{@baseAnchor.index}~#{@extentAnchor.node.type}:#{@extentAnchor.index}"
+    selectAll:()->
+        @active()
+        walker = new WalkerRootFirst(@context)
+        if not walker.first((item)->item.anchor)
+            return false
+        first = walker.node
+        if not walker.last((item)->item.anchor)
+            return false
+        last = walker.node
+        console.debug first.toContentString(),last.toContentString()
+        @fromAnchor first.anchor,last.anchor
+        @baseCursor.conduct "head"
+        @extentCursor.conduct "tail"
+        @update()
+    getSelectedCollection:()->
+        if not @isValid()
+            return null
+        position = (@baseAnchor.node.compareNodePosition @extentAnchor.node)
+        if position is "after"
+            swap = true
+        else if position is "identical"
+            if @baseAnchor.index < @extentAnchor.index
+                swap = true
+        else if position is "under"
+            swap = true
+        if not swap
+            beginNode = @baseAnchor.node
+            endNode = @extentAnchor.node
+            beginAnchor = @baseAnchor.clone()
+            endAnchor = @extentAnchor.clone()
+        else
+            beginNode = @extentAnchor.node
+            endNode = @baseAnchor.node
+            beginAnchor = @extentAnchor.clone()
+            endAnchor = @baseAnchor.clone()
+        walker = new WalkerRootFirst(@context)
+        walker.setNode beginNode
+        results = []
+        while true
+            position = walker.node.compareNodePosition endNode
+            console.debug position,walker.node.contentString,"----"
+            if not walker.node
+                break
+            if position is "contain"
+                walker.skipChildOnce = false
+                if not walker.next()
+                    break
+            else if position is "before"
+                results.push walker.node
+                walker.skipChildOnce = true
+                if not walker.next()
+                    break
+            else if position is "identical"
+                results.push walker.node
+                break
+            else if position is "after"
+                console.debug position,walker.node.contentString,endNode.contentString,"...."
+                throw new Errors.LogicError "shouldn't after end node"
+            else if position is "under"
+                throw new Errors.LogicError "tranverse selection should get identical result before get under it"
+                break
+        result = {
+            beginNode:beginNode
+            endNode:endNode
+            beginAnchor:beginAnchor
+            endAnchor:endAnchor
+            nodes:results
+        }
+    removeSelectedNodes:()->
+        collection = @getSelectedCollection()
+        if collection.beginNode is collection.endNode
+            collection.beginAnchor.deleteBetween collection.endAnchor
+        else
+            for node in collection.nodes
+                if node is collection.beginNode
+                    tail = collection.beginAnchor.clone()
+                    tail.tail()
+                    collection.beginAnchor.deleteBetween tail
+                else if node is collection.endNode
+                    head = collection.endAnchor.clone()
+                    head.head()
+                    head.deleteBetween collection.endAnchor
+                else
+                    node.remove()
+        collection.beginNode.anchor.fromJSON collection.beginAnchor.toJSON()
+        @extentCursor.pointAtAnchor collection.beginAnchor
+        @baseCursor.pointAtAnchor collection.beginAnchor
+        console.debug collection.beginNode.anchor,"begin"
+        console.debug collection.endNode.anchor,"end"
+        @collapseToCursor()
+        return collection
+module.exports = COMSelection

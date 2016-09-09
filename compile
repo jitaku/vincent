@@ -1,0 +1,5 @@
+#!/bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+leaf-require --main "index"  --stand-alone  --compile $DIR/src/script/ -c > ./build/vincent.js
+lessc $DIR/src/style/vincent.less ./build/vincent.less
