@@ -1,0 +1,125 @@
+.no-select{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.has-select{
+    -webkit-touch-callout: auto;
+    -webkit-user-select: auto;
+    -khtml-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+    user-select: auto;
+}
+
+.clickable{
+    cursor:pointer;
+    .no-select;
+}
+.elastic-scroll{
+    -webkit-overflow-scrolling:touch;
+}
+.scrollable{
+    overflow:auto;
+    .elastic-scroll;
+}
+.box-sizing{
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    -webkit-box-sizing:border-box;
+}
+.flex-box{
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: flex;
+    
+}
+.inline-flex{
+    display: -webkit-inline-flex;
+    display: -moz-inline-flex;
+    display: -ms-inline-flex;
+    display: inline-flex;
+    
+}
+.flex{
+    .flex-box; 
+    -webkit-flex-flow:column;
+    -moz-flex-flow:column;
+    flex-flow:column;
+    flex-direction:column;
+}
+.flex-row{
+    .flex-box;
+    -webkit-flex-flow:row;
+    -moz-flex-flow:row;
+    flex-flow:row;
+    flex-direction:row;
+}
+.align-items (@value){
+    -webkit-align-items:@value;
+    align-items:@value;
+}
+.justify-content (@value){
+    -webkit-justify-content:@value;
+    justify-content:@value;
+}
+.flex-center{
+    .justify-content(center);
+    .align-items(center);
+}
+.animation(@args1,@args2:X,...){
+    @args: ~`"@{arguments}".replace(/[\[\]]|\,\sX/g, '')`;
+    -webkit-animation:@args;
+    -moz-animation:@args;
+    -o-animation:@args;
+    -ms-animation:@args;
+    animation:@args;
+}
+
+.keyframes(@name; @frames) {
+    @-webkit-keyframes @name {
+        @vendor: -webkit-;
+        @frames(); 
+    }
+    @keyframes @name {
+        @vendor: ~'';
+        @frames(); 
+    }
+}
+
+.transition(@value1,@value2:X,...){
+    @value: ~`"@{arguments}".replace(/[\[\]]|\,\sX/g, '')`;
+
+    -webkit-transition: @value;
+    -moz-transition: @value;
+    -ms-transition: @value;
+    -o-transition: @value;
+    transition: @value;
+}
+.transform(@args){
+    transform:@args;
+    -webkit-transform:@args;
+}
+.transform-origin(@args){
+    transform-origin:@args;
+    -webkit-transform-origin:@args;
+}
+.animation(@args){
+    animation:@args;
+    -webkit-animation:@args;
+}
+
+.clear-float{
+    clear:both;
+}
+// mobile phone
+@mp: ~"only screen and (max-width: 767px)";
+// tablet
+@tp: ~"only screen and (max-width: 1024px)";
+// desktop
+@dp: ~"only screen and (min-width: 960px)";
+

@@ -1,0 +1,84 @@
+@import "./font.less";
+@base:16px;
+@increase:2px;
+@fix:12px;
+@line-height-expand:1.6;
+html,body{
+    color:#444;
+}
+.text-l1{
+    font-size:@base + @increase * 5 +  @fix;
+    line-height:(@base + @increase * 5 + @fix)*@line-height-expand;
+    @media @mp{
+        font-size:@base + @increase * 5; 
+        line-height:(@base + @increase * 5)*@line-height-expand;
+    }
+    .com-rune{
+        line-height:normal;
+    }
+}
+.text-l2{
+    font-size:@base + @increase * 4;
+    line-height:(@base + @increase * 4)*@line-height-expand;
+    .com-rune{
+        line-height:normal;
+    }
+}
+.text-l3{
+    font-size:@base + @increase * 3;
+    line-height:(@base + @increase * 3)*@line-height-expand;
+    .com-rune{
+        line-height:normal;
+    }
+}
+.text-l4{
+    font-size:@base + @increase * 2;
+    line-height:(@base + @increase * 2)*@line-height-expand;
+    .com-rune{
+        line-height:normal;
+    }
+}
+.text-l5{
+    font-size:@base + @increase;
+    line-height:(@base + @increase)*@line-height-expand;
+    .com-rune{
+        line-height:normal;
+    }
+    
+}
+.text-l6{
+    font-size:@base;
+    line-height:@base + 8px;
+    .com-rune{
+        line-height:normal;
+    }
+}
+.text-l7{
+    font-size:@base - @increase;
+    line-height:@base - @increase + 4px;
+    .com-rune{
+        line-height:normal;
+    }
+}
+.text-l8{
+    font-size:@base - @increase * 2;
+    line-height:@base - @increase + 2px;
+    .com-rune{
+        line-height:normal;
+    }
+}
+.com-rune{
+    line-height:normal;
+}
+
+// WenQuanYi Micro Hei will cause Korean charactor collapse.. So disable it QAQ
+.font-normal{
+    font-family: 'Open Sans',"Helvetica Neue",Arial, "Hiragino Sans GB","STHeiti","Microsoft YaHei",SimSun,Song,sans-serif; // "WenQuanYi Micro Hei"
+    -font-family:monospace;
+}
+.font-serious{
+    font-family: 'Open Sans',"Helvetica Neue",Arial, "Hiragino Sans GB","STHeiti","Microsoft YaHei",SimSun,Song,sans-serif; // "WenQuanYi Micro Hei"
+}
+.font-code{
+    .font-mono;
+}
