@@ -1,7 +1,7 @@
 {
   "name": "vincent",
   "version": "0.0.1",
-  "description": "Vincent editor, a composable rich-text editor.",
+  "description": "Vincent editor, a composable markdown optimized rich-text editor.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
