@@ -23,7 +23,7 @@
       this.selectSession = this.buffer.selectSession;
       this.el.viewPort = this;
       this.el.buffer = this.buffer;
-      this.comfortableMargin = $("body").height() / 8 || 30;
+      this.comfortableMargin = window.innerHeight / 8 || 30;
       this.__defineGetter__("isActive", (function(_this) {
         return function() {
           return _this.buffer.isActive;
@@ -221,10 +221,10 @@
       var dD, dX, dY, i, j, len, len1, name, ref, ref1, ref2, ref3, ref4, ref5, touch, value, x, y;
       this.delta = delta1;
       if (PointerEvent.winHeight == null) {
-        PointerEvent.winHeight = $(window).height();
+        PointerEvent.winHeight = window.innerHeight;
       }
       if (PointerEvent.winWidth == null) {
-        PointerEvent.winWidth = $(window).width();
+        PointerEvent.winWidth = window.innerWidth;
       }
       PointerEvent.maxDimension = Math.max(PointerEvent.winHeight, PointerEvent.winWidth);
       this.raw = e;
@@ -1195,7 +1195,7 @@
     ViewPortTouchController.prototype.handleSideTap = function(p) {
       var e, error;
       if (this.clientWidth == null) {
-        this.clientWidth = $(window).width();
+        this.clientWidth = window.innerWidth;
       }
       if (this.sideTapLimit == null) {
         this.sideTapLimit = 30;

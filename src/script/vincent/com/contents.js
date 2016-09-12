@@ -105,7 +105,7 @@
     NormalizeRichTexts.prototype.type = "Contents";
 
     NormalizeRichTexts.prototype.exec = function() {
-      var anchor, children, contents, currentJoins, cursor, i, index, item, j, joined, k, l, last, len, len1, len2, len3, ref, ref1, ref2, ref3, ref4, ref5, ref6, removed, renderTarget;
+      var anchor, children, contents, currentJoins, cursor, i, index, item, j, joined, k, l, last, len, len1, len2, len3, ref, ref1, ref2, ref3, ref4, removed, renderTarget;
       children = this.target.children.slice();
       if ((ref = window.perf) != null) {
         ref.start("L1");
@@ -114,12 +114,9 @@
         item = children[i];
         index = this.target.indexOf(item);
         if (children.length > 1 && item.length === 0) {
-          if ((ref1 = window.perf) != null) {
-            ref1.start("AC");
-          }
-          ref2 = item.anchors;
-          for (j = 0, len1 = ref2.length; j < len1; j++) {
-            anchor = ref2[j];
+          ref1 = item.anchors;
+          for (j = 0, len1 = ref1.length; j < len1; j++) {
+            anchor = ref1[j];
             cursor = anchor.cursor;
             cursor.next({
               actions: ["head"]
@@ -127,25 +124,22 @@
               actions: ["tail"]
             });
           }
-          if ((ref3 = window.perf) != null) {
-            ref3.end("AC");
-          }
           item.remove();
           removed = true;
         } else if (item.length === 0) {
           true;
         }
       }
-      if ((ref4 = window.perf) != null) {
-        ref4.end("L1");
+      if ((ref2 = window.perf) != null) {
+        ref2.end("L1");
       }
       currentJoins = [];
       children = this.target.children.slice();
       children.push({
         end: true
       });
-      if ((ref5 = window.perf) != null) {
-        ref5.start("L2");
+      if ((ref3 = window.perf) != null) {
+        ref3.start("L2");
       }
       for (index = k = 0, len2 = children.length; k < len2; index = ++k) {
         item = children[index];
@@ -174,8 +168,8 @@
           joined = true;
         }
       }
-      if ((ref6 = window.perf) != null) {
-        ref6.end("L2");
+      if ((ref4 = window.perf) != null) {
+        ref4.end("L2");
       }
       last = this.target.last();
       if (!last || last.type !== "RichText") {

@@ -143,7 +143,7 @@
     }
 
     Rect.prototype.setDimension = function(rect) {
-      var ref, ref1;
+      var prop, ref, ref1, value;
       if (!rect || rect.height <= 6) {
         this.node.style.display = "none";
         return;
@@ -154,10 +154,11 @@
         return;
       }
       this.lastRect = rect;
-      this.node$.css(rect);
-      return this.node$.css({
-        position: "absolute"
-      });
+      for (prop in rect) {
+        value = rect[prop];
+        this.node.style[prop] = value + "px";
+      }
+      return this.node.style.position = "absolute";
     };
 
     return Rect;

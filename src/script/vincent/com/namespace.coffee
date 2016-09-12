@@ -61,13 +61,10 @@ class COMNamespace
         if not Ctor
             throw new Errors.LogicError "compose unregistered element #{target.type}"
         composers = Ctor.composers or []
-        window.perf ?= new Perf()
         for composer in composers
-            perf.start(composer.constructor.name)
             #Logger.debug "test composer",composer.type,composer.constructor.name
             #
             result = composer.compose(target)
-            perf.end(composer.constructor.name)
             if result
                 #Logger.debug "run comp",composer.constructor.name,result
                 return true

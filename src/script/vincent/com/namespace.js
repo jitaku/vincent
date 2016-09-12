@@ -111,14 +111,9 @@
         throw new Errors.LogicError("compose unregistered element " + target.type);
       }
       composers = Ctor.composers || [];
-      if (window.perf == null) {
-        window.perf = new Perf();
-      }
       for (i = 0, len = composers.length; i < len; i++) {
         composer = composers[i];
-        perf.start(composer.constructor.name);
         result = composer.compose(target);
-        perf.end(composer.constructor.name);
         if (result) {
           return true;
         }

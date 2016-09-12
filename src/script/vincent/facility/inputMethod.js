@@ -837,7 +837,7 @@
       this.resizeTimer = setTimeout((function(_this) {
         return function() {
           var height, keyboardHeightMin;
-          height = $(window).height();
+          height = window.innerHeight;
           keyboardHeightMin = height / 4;
           if (Math.abs(height - _this.editor.initHeight) < keyboardHeightMin) {
             return window.document.activeElement.blur();
@@ -847,7 +847,7 @@
       return setTimeout((function(_this) {
         return function() {
           var height, keyboardHeightMin;
-          height = $(window).height();
+          height = window.innerHeight;
           keyboardHeightMin = 150;
           if (!Math.abs(height - _this.editorn.initHeight) < keyboardHeightMin) {
             return _this.editor.caret.scrollViewPortToComfortable();
@@ -1219,12 +1219,16 @@
     }
 
     KeyEventHandler.prototype.handleKeyboard = function(event) {
-      var e, error, ke;
+      var e, error, k, ke, ref;
       try {
         this.emit("key", ke = new KeyEvent(event));
       } catch (error) {
         e = error;
         Logger.error(e);
+      }
+      k = Leaf.Key;
+      if ((ref = event.which) === k.up || ref === k.down || ref === k.home || ref === k.end || ref === k.left || ref === k.right) {
+        event.preventDefault();
       }
       return ke;
     };

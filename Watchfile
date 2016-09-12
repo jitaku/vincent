@@ -1,0 +1,11 @@
+//{basename} /css/style.less => style.less
+//{fullpath} /css/style.less => /css/style.less (unchanged)
+//{filename} /css/style.less => style
+//{extname}  /css/style.less => .less
+//{directory} /css/style.less => /css/
+exports.watchList = [
+    [/^.*src\/script.*coffee$/,"./compile"]
+    ,[/^.*src\/style.*less$/,"./compile"]
+    ,[/^.*example\/.*coffee$/,"coffee -c {fullpath}"]
+    ,[/^.*example\/.*less$/,"lessc {fullpath} > {directory}/{filename}.css"]
+]

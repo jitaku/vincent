@@ -114,7 +114,7 @@
           }
         };
       })(this));
-      this.initHeight = $(window).height();
+      this.initHeight = window.initHeight;
       this.caret.init();
       this.inputMethod.init();
       if (this.hotkeys == null) {

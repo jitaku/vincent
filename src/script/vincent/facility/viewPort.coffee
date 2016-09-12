@@ -9,7 +9,7 @@ class ViewPort extends Leaf.EventEmitter
         @selectSession = @buffer.selectSession
         @el.viewPort = this
         @el.buffer = @buffer
-        @comfortableMargin = $("body").height()/8 or 30
+        @comfortableMargin = window.innerHeight /8 or 30
         @__defineGetter__ "isActive",()=>
             return @buffer.isActive
         @__defineGetter__ "height",()=>
@@ -131,8 +131,8 @@ class ViewPort extends Leaf.EventEmitter
         return rect
 class PointerEvent
     constructor:(e,@delta)->
-        PointerEvent.winHeight ?= $(window).height()
-        PointerEvent.winWidth ?= $(window).width()
+        PointerEvent.winHeight ?= window.innerHeight
+        PointerEvent.winWidth ?= window.innerWidth
         PointerEvent.maxDimension = Math.max(PointerEvent.winHeight,PointerEvent.winWidth)
         @raw = e
         @type = e.type
@@ -802,7 +802,7 @@ class ViewPortTouchController extends Leaf.States
         Vibration.feedback()
         @setState "idle"
     handleSideTap:(p)->
-        @clientWidth ?= $(window).width()
+        @clientWidth ?= window.innerWidth
         @sideTapLimit ?= 30
         try
             if p.x < @sideTapLimit

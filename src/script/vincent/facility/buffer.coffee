@@ -9,7 +9,6 @@ SelectionHighlight = require "./selectionHighlight"
 Highlighter = require "./highlighter"
 SearchSession = require "./searchSession"
 EventEmitter = (require "../common/events").EventEmitter
-BufferHintManager = (require "/view/bufferHintManager")
 IMEHint = require "./imeHint"
 Properties = require "/component/properties"
 SharedCallbacks = require "/component/sharedCallbacks"
@@ -19,7 +18,6 @@ class Buffer extends Leaf.Widget
     constructor:(@editor,option = {})->
         @id = (Buffer.index++).toString()
         super()
-        @hintManager = new BufferHintManager(@editor,this)
         @isActive = false
         @name = option.name or "<buffer #{@id}>"
         @properties = new Properties(this)
@@ -144,8 +142,6 @@ class RichBuffer extends Buffer
             Logger.debug "render debug",this
         @viewPort.setRoot @renderContext.el
         @selectionHighlight.render()
-        #if @editor.platform.isMobile()
-        #    @renderContext.el.style.paddingBottom = $("body").height()/2 + "px"
         @nextRenderCallback()
     setContentString:(contentString)->
         @context.transact ()=>

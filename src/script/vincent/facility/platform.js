@@ -73,10 +73,16 @@
     }
 
     Platform.prototype.isWindows = function() {
+      if (typeof navigator === "undefined" || navigator === null) {
+        return false;
+      }
       return navigator.platform.indexOf('Win') > -1;
     };
 
     Platform.prototype.isSmall = function() {
+      if (typeof window === "undefined" || window === null) {
+        return false;
+      }
       if (this.isSmallCheck) {
         return this._isSmall;
       }
@@ -90,6 +96,9 @@
     };
 
     Platform.prototype.isMeduim = function() {
+      if (typeof window === "undefined" || window === null) {
+        return false;
+      }
       if (this.isMediumCheck) {
         return this._isMedium;
       }
@@ -120,6 +129,9 @@
 
     Platform.prototype.isMobile = function() {
       var check, ua;
+      if (typeof window === "undefined" || window === null) {
+        return false;
+      }
       if (this.isMobileCheck) {
         return this._isMobile;
       }
@@ -143,16 +155,25 @@
 
     Platform.prototype.isLinux = function() {
       var ref, ref1;
+      if (typeof window === "undefined" || window === null) {
+        return false;
+      }
       return ((ref = window.navigator.platform) != null ? (ref1 = ref.toLowerCase()) != null ? ref1.indexOf("linux") : void 0 : void 0) >= 0;
     };
 
     Platform.prototype.isMac = function() {
       var ref, ref1;
+      if (typeof window === "undefined" || window === null) {
+        return false;
+      }
       return ((ref = window.navigator.platform) != null ? (ref1 = ref.toLowerCase()) != null ? ref1.indexOf("mac") : void 0 : void 0) >= 0;
     };
 
     Platform.prototype.isIOS = function() {
       var ref, ref1;
+      if (typeof window === "undefined" || window === null) {
+        return false;
+      }
       return (ref = window.navigator) != null ? (ref1 = ref.userAgent) != null ? ref1.match(/iPhone|iPad|iPod/i) : void 0 : void 0;
     };
 
@@ -171,6 +192,9 @@
 
     Platform.prototype.isAndroid = function() {
       var ref, ref1;
+      if (typeof window === "undefined" || window === null) {
+        return false;
+      }
       return (ref = window.navigator) != null ? (ref1 = ref.userAgent) != null ? ref1.match(/Android/i) : void 0 : void 0;
     };
 
@@ -193,6 +217,9 @@
     };
 
     Platform.prototype.isEmbeded = function() {
+      if (typeof window === "undefined" || window === null) {
+        return false;
+      }
       return window.top !== window;
     };
 
@@ -212,28 +239,9 @@
     };
 
     Platform.prototype.init = function() {
-      return window.addEventListener("message", (function(_this) {
-        return function(e) {
-          var data, err, error;
-          try {
-            Logger.debug(e.data);
-            data = JSON.parse(e.data.toString());
-            if (data.type === "event") {
-              if (data.args == null) {
-                data.args = [];
-              }
-              if (data.source === "embed") {
-                return _this.emit.apply(_this, ["embed/" + data.name].concat(slice.call(data.args)));
-              } else if (data.source === "parent") {
-                return _this.emit.apply(_this, ["parent/" + data.name].concat(slice.call(data.args)));
-              }
-            }
-          } catch (error) {
-            err = error;
-            Logger.error("msg error", err, e);
-          }
-        };
-      })(this));
+      if (typeof window === "undefined" || window === null) {
+
+      }
     };
 
     Platform.prototype.getDeviceDescription = function() {

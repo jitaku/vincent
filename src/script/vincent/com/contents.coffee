@@ -54,11 +54,9 @@ class NormalizeRichTexts extends COMComposer
             # and empty
 
             if children.length > 1 and item.length is 0 # and index isnt @target.children.length - 1
-                window.perf?.start("AC")
                 for anchor in item.anchors
                     cursor = anchor.cursor
                     cursor.next({actions:["head"]}) or cursor.previous({actions:["tail"]})
-                window.perf?.end("AC")
                 item.remove()
                 removed = true
             else if item.length is 0

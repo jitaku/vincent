@@ -3,7 +3,13 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 mkdir -p ./build/style/
 mkdir -p ./build/script/
-leaf-require --main "index"  --stand-alone  --compile $DIR/src/script/ -c > ./build/script/vincent.js
+echo "Compiling coffee script..."
+find ./src/script/ | grep .coffee$ | xargs coffee -c
+echo "Building vincent.js"
+leaf-require --stand-alone --context "VincentContext" --compile $DIR/src/script/ -c > ./build/script/vincent.js
+cat ./src/adapter.js >> ./build/script/vincent.js
+echo "Building vincent.css"
 lessc $DIR/src/style/vincent.less > ./build/style/vincent.css
+echo "Copy resources"
 cp ./src/resource ./build/resource/ -rf
 

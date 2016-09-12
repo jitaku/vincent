@@ -121,10 +121,10 @@ class Rect extends Leaf.Widget
             @node.style.display = "block"
         if @lastRect?.left is rect.left and @lastRect?.top is rect.top and @lastRect.width is rect.width and @lastRect.height is rect.height
             return
+
         @lastRect = rect
-        @node$.css rect
-        @node$.css {
-            position:"absolute"
-        }
+        for prop,value of rect
+            @node.style[prop] = value + "px"
+        @node.style.position = "absolute"
 
 module.exports = SelectionHighlight

@@ -58,7 +58,7 @@ class Editor extends Leaf.Widget
             if buffer instanceof Buffer.RichBuffer
                 @caret.attachTo buffer
 
-        @initHeight = $(window).height()
+        @initHeight = window.initHeight
         @caret.init()
         @inputMethod.init()
 

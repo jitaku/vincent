@@ -514,14 +514,14 @@ class GeneralInputMethod extends Leaf.States
     checkResize:()->
         clearTimeout @resizeTimer
         @resizeTimer = setTimeout ()=>
-            height = $(window).height()
+            height = window.innerHeight
             keyboardHeightMin = height/4
             if Math.abs(height - @editor.initHeight) < keyboardHeightMin
                 # It's keyboard hide
                 window.document.activeElement.blur()
         ,500
         setTimeout ()=>
-            height = $(window).height()
+            height = window.innerHeight
             keyboardHeightMin = 150
             if not Math.abs(height - @editorn.initHeight) < keyboardHeightMin
                 # likely to be keyboard show
@@ -775,6 +775,9 @@ class KeyEventHandler extends Trait
             @emit "key",ke = new KeyEvent event
         catch e
             Logger.error e
+        k = Leaf.Key
+        if event.which in [k.up,k.down,k.home,k.end,k.left,k.right]
+            event.preventDefault()
         return ke
 class FocusableTrait extends Trait
     ensureFocusState:(option = {})->

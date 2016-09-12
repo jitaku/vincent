@@ -38,8 +38,12 @@ class Platform extends Leaf.EventEmitter
         @deviceDetail = @device.init()
         Logger.debug "Platform",@deviceDetail.os?.name,@deviceDetail.browser?.name
     isWindows:()->
+        if not navigator?
+            return false
         return navigator.platform.indexOf('Win') > -1
     isSmall:()->
+        if not window?
+            return false
         if @isSmallCheck
             return @_isSmall
         @isSmallCheck = true
@@ -49,6 +53,8 @@ class Platform extends Leaf.EventEmitter
         @_isSmall = false
         return false
     isMeduim:()->
+        if not window?
+            return false
         if @isMediumCheck
             return @_isMedium
         @isMediumCheck = true
@@ -66,6 +72,8 @@ class Platform extends Leaf.EventEmitter
     isTouch:()->
         return @isMobile()
     isMobile:()->
+        if not window?
+            return false
         if @isMobileCheck
             return @_isMobile
         check = false
@@ -80,10 +88,16 @@ class Platform extends Leaf.EventEmitter
     isNative:()->
         return false
     isLinux:()->
+        if not window?
+            return false
         return window.navigator.platform?.toLowerCase()?.indexOf("linux") >= 0
     isMac:()->
+        if not window?
+            return false
         return window.navigator.platform?.toLowerCase()?.indexOf("mac") >= 0
     isIOS:()->
+        if not window?
+            return false
         return window.navigator?.userAgent?.match(/iPhone|iPad|iPod/i)
     isSafari:()->
         is_chrome = navigator.userAgent.indexOf('Chrome') > -1;
@@ -95,6 +109,8 @@ class Platform extends Leaf.EventEmitter
             return true
         return false
     isAndroid:()->
+        if not window?
+            return false
         return window.navigator?.userAgent?.match(/Android/i)
     isVisible:()->
         if typeof document.hidden isnt "undefined"
@@ -112,6 +128,8 @@ class Platform extends Leaf.EventEmitter
             visibilityChange = "webkitvisibilitychange"
         return not document[hidden]
     isEmbeded:()->
+        if not window?
+            return false
         return window.top isnt window
     emitEmbedEvent:(name,args...)->
         if not @isEmbeded()
@@ -124,19 +142,8 @@ class Platform extends Leaf.EventEmitter
         }
         window.top.postMessage JSON.stringify(message),"*"
     init:()->
-        window.addEventListener "message",(e)=>
-            try
-                Logger.debug e.data
-                data = JSON.parse e.data.toString()
-                if data.type is "event"
-                    data.args ?= []
-                    if data.source is "embed"
-                        @emit "embed/#{data.name}",data.args...
-                    else if data.source is "parent"
-                        @emit "parent/#{data.name}",data.args...
-            catch err
-                Logger.error "msg error",err,e
-                return
+        if not window?
+            return
     getDeviceDescription:()->
         return "#{@deviceDetail.os.name} #{@deviceDetail.browser.name}"
 module.exports = Platform
