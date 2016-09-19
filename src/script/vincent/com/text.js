@@ -114,12 +114,14 @@
     };
 
     COMText.prototype.render = function(rc) {
-      var container, content, dec, frag, i, index, j, len, len1, partial, property, ref, ref1, ref2, ref3, value;
+      var container, content, dec, frag, i, index, j, len, len1, partial, property, ref, ref1, ref2, ref3, secret, secretChar, str, value;
       COMText.__super__.render.call(this, rc, {
         force: true
       });
       this.computePartials();
       frag = document.createDocumentFragment();
+      secret = this.secret || this.parent.secret || this.context.secret || false;
+      secretChar = this.secretChar || this.parent.secretChar || this.context.secretChar || "*";
       ref = this.partials;
       for (index = i = 0, len = ref.length; i < len; index = ++i) {
         partial = ref[index];
@@ -136,7 +138,11 @@
             content = content.slice(0, -1) + "";
           }
         }
-        partial.textNode = document.createTextNode(content.toString());
+        str = content.toString();
+        if (secret) {
+          str = str.replace(/./g, secretChar || "*");
+        }
+        partial.textNode = document.createTextNode(str);
         partial.el.appendChild(partial.textNode);
         ref1 = partial.decorations;
         for (j = 0, len1 = ref1.length; j < len1; j++) {

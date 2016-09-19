@@ -849,7 +849,7 @@
           var height, keyboardHeightMin;
           height = window.innerHeight;
           keyboardHeightMin = 150;
-          if (!Math.abs(height - _this.editorn.initHeight) < keyboardHeightMin) {
+          if (!Math.abs(height - _this.editor.initHeight) < keyboardHeightMin) {
             return _this.editor.caret.scrollViewPortToComfortable();
           }
         };

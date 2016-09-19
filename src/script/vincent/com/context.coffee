@@ -617,7 +617,7 @@ class ComposeContext
         # think my new content might have some new composing job.
         target._requireCompose = false
         @previousComposeTarget = target
-        if target.root and target.root.withContext and target.compose()
+        if target.root and target.root.withContext and (target?.parent or target?.root is target) and target.compose()
             return true
         return true
     composeAsync:(callback = ()->)->

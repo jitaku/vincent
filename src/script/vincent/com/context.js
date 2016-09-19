@@ -1066,7 +1066,7 @@
       target = this.queue.shift();
       target._requireCompose = false;
       this.previousComposeTarget = target;
-      if (target.root && target.root.withContext && target.compose()) {
+      if (target.root && target.root.withContext && ((target != null ? target.parent : void 0) || (target != null ? target.root : void 0) === target) && target.compose()) {
         return true;
       }
       return true;

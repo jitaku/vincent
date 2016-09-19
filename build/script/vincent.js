@@ -11626,7 +11626,7 @@ function exec(){
       target = this.queue.shift();
       target._requireCompose = false;
       this.previousComposeTarget = target;
-      if (target.root && target.root.withContext && target.compose()) {
+      if (target.root && target.root.withContext && ((target != null ? target.parent : void 0) || (target != null ? target.root : void 0) === target) && target.compose()) {
         return true;
       }
       return true;
@@ -18033,12 +18033,14 @@ function exec(){
     };
 
     COMText.prototype.render = function(rc) {
-      var container, content, dec, frag, i, index, j, len, len1, partial, property, ref, ref1, ref2, ref3, value;
+      var container, content, dec, frag, i, index, j, len, len1, partial, property, ref, ref1, ref2, ref3, secret, secretChar, str, value;
       COMText.__super__.render.call(this, rc, {
         force: true
       });
       this.computePartials();
       frag = document.createDocumentFragment();
+      secret = this.secret || this.parent.secret || this.context.secret || false;
+      secretChar = this.secretChar || this.parent.secretChar || this.context.secretChar || "*";
       ref = this.partials;
       for (index = i = 0, len = ref.length; i < len; index = ++i) {
         partial = ref[index];
@@ -18055,7 +18057,11 @@ function exec(){
             content = content.slice(0, -1) + "";
           }
         }
-        partial.textNode = document.createTextNode(content.toString());
+        str = content.toString();
+        if (secret) {
+          str = str.replace(/./g, secretChar || "*");
+        }
+        partial.textNode = document.createTextNode(str);
         partial.el.appendChild(partial.textNode);
         ref1 = partial.decorations;
         for (j = 0, len1 = ref1.length; j < len1; j++) {
@@ -25942,7 +25948,7 @@ function exec(){
           var height, keyboardHeightMin;
           height = window.innerHeight;
           keyboardHeightMin = 150;
-          if (!Math.abs(height - _this.editorn.initHeight) < keyboardHeightMin) {
+          if (!Math.abs(height - _this.editor.initHeight) < keyboardHeightMin) {
             return _this.editor.caret.scrollViewPortToComfortable();
           }
         };

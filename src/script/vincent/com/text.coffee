@@ -70,6 +70,9 @@ class COMText extends COMNode
         super(rc,{force:true})
         @computePartials()
         frag = document.createDocumentFragment()
+        # display "*" for password or some kind
+        secret = @secret or @parent.secret or @context.secret or false
+        secretChar = @secretChar or @parent.secretChar or @context.secretChar or "*"
         for partial,index in @partials
             partial.el = document.createElement "span"
             partial.el.classList.add "com-text-part"
@@ -82,7 +85,10 @@ class COMText extends COMNode
                     content = content.slice(0,-1) + " "
                 else
                     content = content.slice(0,-1) + ""
-            partial.textNode = document.createTextNode content.toString()
+            str = content.toString()
+            if secret
+                str = str.replace(/./g,secretChar or "*")
+            partial.textNode = document.createTextNode str
             partial.el.appendChild partial.textNode
             for dec in partial.decorations
                 dec.apply partial.el

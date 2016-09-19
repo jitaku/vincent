@@ -523,7 +523,7 @@ class GeneralInputMethod extends Leaf.States
         setTimeout ()=>
             height = window.innerHeight
             keyboardHeightMin = 150
-            if not Math.abs(height - @editorn.initHeight) < keyboardHeightMin
+            if not Math.abs(height - @editor.initHeight) < keyboardHeightMin
                 # likely to be keyboard show
                 @editor.caret.scrollViewPortToComfortable()
         ,10
