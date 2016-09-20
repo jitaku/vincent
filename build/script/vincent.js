@@ -23288,11 +23288,21 @@ function exec(){
     };
 
     HTMLTag2Flatten.prototype.codeFlatten = function(tag) {
-      return "\n```\n" + (this.escapeChar(this.getChildrenTextStream(tag), "`")) + "\n```\n";
+      var cs;
+      cs = this.escapeChar(this.getChildrenTextStream(tag), "`");
+      if (cs.indexOf("\n") < 0) {
+        return "`" + cs + "`";
+      }
+      return "\n```\n" + cs + "\n```\n";
     };
 
     HTMLTag2Flatten.prototype.preFlatten = function(tag) {
-      return "\n```\n" + (this.escapeChar(this.getChildrenTextStream(tag), "`")) + "\n```\n";
+      var cs;
+      cs = this.escapeChar(this.getChildrenTextStream(tag), "`");
+      if (cs.indexOf("\n") < 0) {
+        return "`" + cs + "`";
+      }
+      return "\n```\n" + cs + "\n```\n";
     };
 
     HTMLTag2Flatten.prototype.escapeChar = function(text, char, replacement) {

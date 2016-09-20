@@ -169,9 +169,15 @@ class HTMLTag2Flatten
     olFlatten:(tag)->
         return new UlFlatter(this,tag).text
     codeFlatten:(tag)->
-        return "\n```\n#{@escapeChar @getChildrenTextStream(tag),"`"}\n```\n"
+        cs = @escapeChar @getChildrenTextStream(tag),"`"
+        if cs.indexOf("\n") < 0
+            return "`#{cs}`"
+        return "\n```\n#{cs}\n```\n"
     preFlatten:(tag)->
-        return "\n```\n#{@escapeChar @getChildrenTextStream(tag),"`"}\n```\n"
+        cs = @escapeChar @getChildrenTextStream(tag),"`"
+        if cs.indexOf("\n") < 0
+            return "`#{cs}`"
+        return "\n```\n#{cs}\n```\n"
     escapeChar:(text,char,replacement)->
         return text.replace(new RegExp(char,"g"),replacement or "\\#{char}")
     resolveInlineResource:(text)->
