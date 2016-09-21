@@ -1,5 +1,4 @@
 html2markdown = require "/component/html2markdown"
-COMConverter = require "./comConverter"
 class Clipboard
     constructor:(@editor)->
         @mime = "application/json"
