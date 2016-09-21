@@ -172,6 +172,7 @@ class COMRichText extends COMContainer
                     @context.transact ()=>
                         @trigger?({via:"holder"})
         else
+            console.error @holder,this,@children,@cache,@rc
             @holder.textNode.textContent = ""
         # See COMText.blockTail for detail
         if @layout is "block"
