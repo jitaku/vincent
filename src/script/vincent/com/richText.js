@@ -283,7 +283,6 @@
           })(this);
         }
       } else {
-        console.error(this.holder, this, this.children, this.cache, this.rc);
         this.holder.textNode.textContent = "";
       }
       if (this.layout === "block") {
