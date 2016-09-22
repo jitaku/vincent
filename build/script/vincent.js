@@ -20659,7 +20659,7 @@ function exec(){
     }
 
     BufferManager.prototype.render = function() {
-      var SLOW_RENDER, buffer, endRender, i, len, ref1, start;
+      var SLOW_RENDER, buffer, endRender, i, len, ref1, ref2, start;
       SLOW_RENDER = 10;
       start = Date.now();
       ref1 = this.buffers;
@@ -20673,6 +20673,9 @@ function exec(){
         if (buffer.isFocusing) {
           buffer.selectSession.syncSelection();
         }
+      }
+      if ((ref2 = this.currentFocus) != null) {
+        ref2.ensureRenderContext();
       }
       endRender = Date.now();
       if (endRender - start > SLOW_RENDER) {
@@ -20716,6 +20719,7 @@ function exec(){
         this.currentFocus.blur();
       }
       this.currentFocus = buffer;
+      buffer.ensureRenderContext();
       buffer.focus();
       if (!buffer.isActive) {
         Logger.warn("Focus at none active buffer doesn't make sense.", buffer);

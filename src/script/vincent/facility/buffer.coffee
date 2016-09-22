@@ -179,6 +179,7 @@ class BufferManager extends EventEmitter
             buffer.emit "afterRender"
             if buffer.isFocusing
                 buffer.selectSession.syncSelection()
+        @currentFocus?.ensureRenderContext()
         endRender = Date.now()
         if endRender - start > SLOW_RENDER
             Logger.debug "SLOW_RENDER",endRender - start,"ms",">",SLOW_RENDER,"ms"
@@ -203,6 +204,7 @@ class BufferManager extends EventEmitter
         if @currentFocus
             @currentFocus.blur()
         @currentFocus = buffer
+        buffer.ensureRenderContext()
         buffer.focus()
         if not buffer.isActive
             Logger.warn "Focus at none active buffer doesn't make sense.",buffer
