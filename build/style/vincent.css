@@ -120,7 +120,7 @@
 }
 .font-mono {
   font-weight: 400;
-  font-family: 'Inconsolata', monospace;
+  font-family: 'Inconsolata', "Microsoft Yahei", monospace;
 }
 html,
 body {
@@ -200,7 +200,7 @@ body {
 }
 .font-code {
   font-weight: 400;
-  font-family: 'Inconsolata', monospace;
+  font-family: 'Inconsolata', "Microsoft Yahei", monospace;
 }
 .icon-fix-b1 {
   position: relative;
