@@ -274,9 +274,9 @@
       currentMatch = window.location.toString().match(reg);
       currentUser = (currentMatch != null ? currentMatch[3] : void 0) || null;
       if (currentUser === username) {
-        return "jtk://" + path;
+        return "jtk://" + (decodeURIComponent(path));
       } else {
-        return "jtk:///" + username + "/" + path;
+        return "jtk:///" + username + "/" + (decodeURIComponent(path));
       }
     };
 

@@ -174,9 +174,9 @@ class Clipboard
         currentMatch = window.location.toString().match(reg)
         currentUser = currentMatch?[3] or null
         if currentUser is username
-            return "jtk://#{path}"
+            return "jtk://#{decodeURIComponent path}"
         else
-            return "jtk:///#{username}/#{path}"
+            return "jtk:///#{username}/#{decodeURIComponent path}"
     pasteCOMV0:(value)->
         @editor.context.transact ()=>
             split = @editor.buffer.cursor.anchor?.split()
