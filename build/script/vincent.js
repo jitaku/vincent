@@ -13,40 +13,40 @@
 
 var URI = function(){
     function resolveUri(sUri, sBaseUri) {
-	    if (sUri == '' || sUri.charAt(0) == '#') return sUri;
-	    var hUri = getUriComponents(sUri);
-	    if (hUri.scheme) return sUri;
-	    var hBaseUri = getUriComponents(sBaseUri);
-	    hUri.scheme = hBaseUri.scheme;
-	    if (!hUri.authority) {
-	        hUri.authority = hBaseUri.authority;
-	        if (hUri.path.charAt(0) != '/') {
-		    aUriSegments = hUri.path.split('/');
-		    aBaseUriSegments = hBaseUri.path.split('/');
-		    aBaseUriSegments.pop();
-		    var iBaseUriStart = aBaseUriSegments[0] == '' ? 1 : 0;
-		    for (var i = 0;i < aUriSegments.length; i++) {
-		        if (aUriSegments[i] == '..')
-			    if (aBaseUriSegments.length > iBaseUriStart) aBaseUriSegments.pop();
-		        else { aBaseUriSegments.push(aUriSegments[i]); iBaseUriStart++; }
-		        else if (aUriSegments[i] != '.') aBaseUriSegments.push(aUriSegments[i]);
-		    }
-		    if (aUriSegments[i] == '..' || aUriSegments[i] == '.') aBaseUriSegments.push('');
-		    hUri.path = aBaseUriSegments.join('/');
-	        }
-	    }
-	    var result = '';
-	    if (hUri.scheme   ) result += hUri.scheme + ':';
-	    if (hUri.authority) result += '//' + hUri.authority;
-	    if (hUri.path     ) result += hUri.path;
-	    if (hUri.query    ) result += '?' + hUri.query;
-	    if (hUri.fragment ) result += '#' + hUri.fragment;
-	    return result;
+    if (sUri == '' || sUri.charAt(0) == '#') return sUri;
+    var hUri = getUriComponents(sUri);
+    if (hUri.scheme) return sUri;
+    var hBaseUri = getUriComponents(sBaseUri);
+    hUri.scheme = hBaseUri.scheme;
+    if (!hUri.authority) {
+        hUri.authority = hBaseUri.authority;
+        if (hUri.path.charAt(0) != '/') {
+        aUriSegments = hUri.path.split('/');
+        aBaseUriSegments = hBaseUri.path.split('/');
+        aBaseUriSegments.pop();
+        var iBaseUriStart = aBaseUriSegments[0] == '' ? 1 : 0;
+        for (var i = 0;i < aUriSegments.length; i++) {
+            if (aUriSegments[i] == '..')
+            if (aBaseUriSegments.length > iBaseUriStart) aBaseUriSegments.pop();
+            else { aBaseUriSegments.push(aUriSegments[i]); iBaseUriStart++; }
+            else if (aUriSegments[i] != '.') aBaseUriSegments.push(aUriSegments[i]);
+        }
+        if (aUriSegments[i] == '..' || aUriSegments[i] == '.') aBaseUriSegments.push('');
+        hUri.path = aBaseUriSegments.join('/');
+        }
+    }
+    var result = '';
+    if (hUri.scheme   ) result += hUri.scheme + ':';
+    if (hUri.authority) result += '//' + hUri.authority;
+    if (hUri.path     ) result += hUri.path;
+    if (hUri.query    ) result += '?' + hUri.query;
+    if (hUri.fragment ) result += '#' + hUri.fragment;
+    return result;
     }
     uriregexp = new RegExp('^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?');
     function getUriComponents(uri) {
-	    var c = uri.match(uriregexp);
-	    return { scheme: c[2], authority: c[4], path: c[5], query: c[7], fragment: c[9] };
+    var c = uri.match(uriregexp);
+    return { scheme: c[2], authority: c[4], path: c[5], query: c[7], fragment: c[9] };
     }
     var URI = {}
     URI.resolve = function(base,target){
@@ -198,20 +198,46 @@ BundleBuilder.prototype["generateFakeWorker"] = function (option) {
       }, 0);
       return fakeWorker.hostend;
     };
+BundleBuilder.prototype["replaceSafe"] = function (str) {
+      ReplaceSafeString = (function() {
+        function ReplaceSafeString(str1) {
+          this.str = str1;
+        }
+
+        ReplaceSafeString.prototype.replace = function(q, rep) {
+          if (typeof rep === "string") {
+            str = this.str.replace(q, function() {
+              return rep;
+            });
+          } else {
+            str = this.str.replace(q, rep);
+          }
+          return new ReplaceSafeString(str);
+        };
+
+        ReplaceSafeString.prototype.toString = function() {
+          return this.str;
+        };
+
+        return ReplaceSafeString;
+
+      })();
+      return new ReplaceSafeString(str);
+    };
 BundleBuilder.prototype["generateBundle"] = function () {
       var core, prefix, scripts, suffix;
       prefix = this.prefixCodes.join(";\n");
       suffix = this.suffixCodes.join(";\n");
       scripts = this.scripts.map((function(_this) {
         return function(script) {
-          return _this.moduleTemplate.replace(/{{contextName}}/g, _this.contextName).replace(/{{currentModulePath}}/g, script.path).replace("{{currentModuleContent}}", script.content);
+          return _this.replaceSafe(_this.moduleTemplate).replace(/{{contextName}}/g, _this.contextName).replace(/{{currentModulePath}}/g, script.path).replace("{{currentModuleContent}}", script.content).toString();
         };
       })(this));
-      core = this.coreTemplate.replace(/{{contextName}}/g, this.contextName).replace("{{modules}}", scripts.join(";\n")).replace("{{createContextProcedure}}", this.getPureFunctionProcedure("createBundleContext")).replace("{{entryData}}").replace("{{BundleBuilderCode}}", this.getPureClassCode(BundleBuilder));
+      core = this.replaceSafe(this.coreTemplate).replace(/{{contextName}}/g, this.contextName).replace("{{modules}}", scripts.join(";\n")).replace("{{createContextProcedure}}", this.getPureFunctionProcedure("createBundleContext")).replace("{{entryData}}").replace("{{BundleBuilderCode}}", this.getPureClassCode(BundleBuilder)).toString();
       return [prefix, core, suffix].join(";\n");
     };
 BundleBuilder.prototype["getPureFunctionProcedure"] = function (name) {
-      return "(" + (this["$" + name].toString()) + ")()";
+      return "(" + (this["$$" + name].toString()) + ")()";
     };
 BundleBuilder.prototype["getPureClassCode"] = function (ClassObject, className) {
       var codes, constructor, prop, ref, template, value;
@@ -229,11 +255,11 @@ BundleBuilder.prototype["getPureClassCode"] = function (ClassObject, className) 
         } else {
           value = JSON.stringify(value);
         }
-        codes.push(template.replace("{{prop}}", prop).replace("{{value}}", value));
+        codes.push(this.replaceSafe(template).replace("{{prop}}", prop).replace("{{value}}", value).toString());
       }
       return className + " = " + (constructor.toString()) + "\n" + (codes.join("\n"));
     };
-BundleBuilder.prototype["$createBundleContext"] = function () {
+BundleBuilder.prototype["$$createBundleContext"] = function () {
       return {
         modules: {},
         wrapCode: function(string) {
@@ -358,7 +384,7 @@ BundleBuilder.prototype["$createBundleContext"] = function () {
       };
     };
 BundleBuilder.prototype["moduleTemplate"] = "(function(){\nvar require = {{contextName}}.requireModule.bind({{contextName}},\"{{currentModulePath}}\");\nvar module = {};\nmodule.exports = {};\nvar exports = module.exports;\nfunction exec(){\n    {{currentModuleContent}}\n}\n{{contextName}}.setModule(\"{{currentModulePath}}\",module,exec);\n})()";
-BundleBuilder.prototype["coreTemplate"] = "(function(){\n/**\n * Implementation of base URI resolving algorithm in rfc2396.\n * - Algorithm from section 5.2\n *   (ignoring difference between undefined and '')\n * - Regular expression from appendix B\n * - Tests from appendix C\n *\n * @param {string} uri the relative URI to resolve\n * @param {string} baseuri the base URI (must be absolute) to resolve against\n */\n\nvar URI = function(){\n    function resolveUri(sUri, sBaseUri) {\n\t    if (sUri == '' || sUri.charAt(0) == '#') return sUri;\n\t    var hUri = getUriComponents(sUri);\n\t    if (hUri.scheme) return sUri;\n\t    var hBaseUri = getUriComponents(sBaseUri);\n\t    hUri.scheme = hBaseUri.scheme;\n\t    if (!hUri.authority) {\n\t        hUri.authority = hBaseUri.authority;\n\t        if (hUri.path.charAt(0) != '/') {\n\t\t    aUriSegments = hUri.path.split('/');\n\t\t    aBaseUriSegments = hBaseUri.path.split('/');\n\t\t    aBaseUriSegments.pop();\n\t\t    var iBaseUriStart = aBaseUriSegments[0] == '' ? 1 : 0;\n\t\t    for (var i = 0;i < aUriSegments.length; i++) {\n\t\t        if (aUriSegments[i] == '..')\n\t\t\t    if (aBaseUriSegments.length > iBaseUriStart) aBaseUriSegments.pop();\n\t\t        else { aBaseUriSegments.push(aUriSegments[i]); iBaseUriStart++; }\n\t\t        else if (aUriSegments[i] != '.') aBaseUriSegments.push(aUriSegments[i]);\n\t\t    }\n\t\t    if (aUriSegments[i] == '..' || aUriSegments[i] == '.') aBaseUriSegments.push('');\n\t\t    hUri.path = aBaseUriSegments.join('/');\n\t        }\n\t    }\n\t    var result = '';\n\t    if (hUri.scheme   ) result += hUri.scheme + ':';\n\t    if (hUri.authority) result += '//' + hUri.authority;\n\t    if (hUri.path     ) result += hUri.path;\n\t    if (hUri.query    ) result += '?' + hUri.query;\n\t    if (hUri.fragment ) result += '#' + hUri.fragment;\n\t    return result;\n    }\n    uriregexp = new RegExp('^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\\\?([^#]*))?(#(.*))?');\n    function getUriComponents(uri) {\n\t    var c = uri.match(uriregexp);\n\t    return { scheme: c[2], authority: c[4], path: c[5], query: c[7], fragment: c[9] };\n    }\n    var URI = {}\n    URI.resolve = function(base,target){\n        return resolveUri(target,base);\n    }\n    URI.normalize = function(url){\n        return URI.resolve(\"\",url);\n    }\n    return {URI:URI}\n}();\n{{BundleBuilderCode}}\n{{contextName}} = {{createContextProcedure}};\n{{contextName}}.contextName = \"{{contextName}}\";\n{{modules}};\n})()";
+BundleBuilder.prototype["coreTemplate"] = "(function(){\n/**\n * Implementation of base URI resolving algorithm in rfc2396.\n * - Algorithm from section 5.2\n *   (ignoring difference between undefined and '')\n * - Regular expression from appendix B\n * - Tests from appendix C\n *\n * @param {string} uri the relative URI to resolve\n * @param {string} baseuri the base URI (must be absolute) to resolve against\n */\n\nvar URI = function(){\n    function resolveUri(sUri, sBaseUri) {\n    if (sUri == '' || sUri.charAt(0) == '#') return sUri;\n    var hUri = getUriComponents(sUri);\n    if (hUri.scheme) return sUri;\n    var hBaseUri = getUriComponents(sBaseUri);\n    hUri.scheme = hBaseUri.scheme;\n    if (!hUri.authority) {\n        hUri.authority = hBaseUri.authority;\n        if (hUri.path.charAt(0) != '/') {\n        aUriSegments = hUri.path.split('/');\n        aBaseUriSegments = hBaseUri.path.split('/');\n        aBaseUriSegments.pop();\n        var iBaseUriStart = aBaseUriSegments[0] == '' ? 1 : 0;\n        for (var i = 0;i < aUriSegments.length; i++) {\n            if (aUriSegments[i] == '..')\n            if (aBaseUriSegments.length > iBaseUriStart) aBaseUriSegments.pop();\n            else { aBaseUriSegments.push(aUriSegments[i]); iBaseUriStart++; }\n            else if (aUriSegments[i] != '.') aBaseUriSegments.push(aUriSegments[i]);\n        }\n        if (aUriSegments[i] == '..' || aUriSegments[i] == '.') aBaseUriSegments.push('');\n        hUri.path = aBaseUriSegments.join('/');\n        }\n    }\n    var result = '';\n    if (hUri.scheme   ) result += hUri.scheme + ':';\n    if (hUri.authority) result += '//' + hUri.authority;\n    if (hUri.path     ) result += hUri.path;\n    if (hUri.query    ) result += '?' + hUri.query;\n    if (hUri.fragment ) result += '#' + hUri.fragment;\n    return result;\n    }\n    uriregexp = new RegExp('^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\\\?([^#]*))?(#(.*))?');\n    function getUriComponents(uri) {\n    var c = uri.match(uriregexp);\n    return { scheme: c[2], authority: c[4], path: c[5], query: c[7], fragment: c[9] };\n    }\n    var URI = {}\n    URI.resolve = function(base,target){\n        return resolveUri(target,base);\n    }\n    URI.normalize = function(url){\n        return URI.resolve(\"\",url);\n    }\n    return {URI:URI}\n}();\n{{BundleBuilderCode}}\n{{contextName}} = {{createContextProcedure}};\n{{contextName}}.contextName = \"{{contextName}}\";\n{{modules}};\n})()";
 VincentContext = (function () {
       return {
         modules: {},
@@ -12282,7 +12308,7 @@ function exec(){
     InputSuggesterTrait.prototype.IMEReplace = function(before, after) {
       var value;
       if (this.context.isReadonly) {
-        this.context.emit("editAttemp");
+        this.context.emit("editAttempt");
         return false;
       }
       value = false;

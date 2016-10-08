@@ -547,7 +547,7 @@
     InputSuggesterTrait.prototype.IMEReplace = function(before, after) {
       var value;
       if (this.context.isReadonly) {
-        this.context.emit("editAttemp");
+        this.context.emit("editAttempt");
         return false;
       }
       value = false;
