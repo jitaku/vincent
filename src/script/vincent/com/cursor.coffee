@@ -283,7 +283,7 @@ class InputSuggesterTrait extends Trait
         return @anchor?.matchingBeforeText(string)
     IMEReplace:(before,after)->
         if @context.isReadonly
-            @context.emit "editAttemp"
+            @context.emit "editAttempt"
             return false
         value = false
         @context.transact ()=>
